@@ -1,17 +1,24 @@
 import React, { useEffect } from 'react'
 import { useState } from 'react'
+import { SignupUser } from './auth'
 import {BrowserRouter, Routes, Route, Link} from 'react-router-dom'
 
 import {Signin, Signup} from './Components/form'
 import NotFound from './Components/notfound'
 
+var isAuthenticated = false
+console.log(isAuthenticated)
 
 
 const App = () => {
-  const [notification, setnotification] = useState(false);
-  function formprocess(dict) {
-    console.log(dict.mail)
-    setnotification(true)
+  async function formprocess(dict) {
+    console.log(dict)
+    const user = await SignupUser(dict)
+    if (user){
+      isAuthenticated = true
+      console.log('login', isAuthenticated)
+    }
+    console.log(user)
   }
 
   return (
@@ -38,8 +45,8 @@ const App = () => {
 
         </div>
         }/>
-        <Route path='/signin' element={<Signin/>}/>
-        <Route path='/signup' element={<Signup/>}/>
+        <Route path='/signin' element={<Signin response={formprocess}/>}/>
+        <Route path='/signup' element={<Signup response={formprocess}/>}/>
         <Route path='*' element={<NotFound/>}/>
     </Routes>
     </BrowserRouter>
