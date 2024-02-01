@@ -1,11 +1,15 @@
 //Library Imports
 import React from 'react'
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate} from 'react-router-dom'
+import { account } from '../Utilities/appwriteconfig'
 import {GoogleAuthProvider, signInWithPopup} from 'firebase/auth'
+import {useAuthState} from 'react-firebase-hooks/auth'
+import { useAuth } from '../Utilities/AuthContext'
 
-import {auth} from '../firebase'
-import Loader from './loader'
+
+import {auth} from '../Utilities/firebase'
+// import Loader from './loader'
 
 //Static Assets
 import logo from '../Assets/Images/logo2.png'
@@ -13,27 +17,32 @@ import google from '../Assets/Images/google.png'
 import github from '../Assets/Images/github.png'
 
 //Pre initializers
-document.title = "MGLabs || Signin"
     
 //Code
 export const Signin = (props) => {
+  const navigate = useNavigate()
+  document.title = "MGLabs || Signin"
+  const {user, Login} = useAuth()
+  console.log(user)
+  if (user) navigate("/home")
+  //Google Auth Check
+  // const [user,loading] = useAuthState(auth)
+  // const navigate = useNavigate()
+  
+  //Form Handling
   const [formData, setformData] = useState({
     "mail": "", 
     "password": ""
 })
-    
-
-  
-    function handlingFunction(e){
+  function handlingFunction(e){
         e.preventDefault()
-        console.log("from form",setformData.mail, setformData.password)
-        props.response(setformData);
+        const loginOps = Login(setformData)
     }
     return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-8 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <img
-            className="mx-auto h-28 w-auto"
+            className="mx-auto h-28 w-auto drop-shadow-2xl"
             src={logo}
             alt="Your Company"
           />
@@ -112,35 +121,46 @@ export const Signin = (props) => {
 
 export const Signup = (props) => {
   document.title = "MGLabs || Create an account"
-  async function Oauth(){
-    const googleauthprovider = new GoogleAuthProvider()
-      const result = await signInWithPopup(auth, googleauthprovider)
-      console.log(result)
-  }
+  const {user, Register} = useAuth()
+  console.log(user) //Dev purposed
   const [formData, setformData] = useState({
     "username": "",
     "mail": "", 
     "password1": "",
     "password2": ""
 })
-  const [errors, setErrors] = useState({"title":""})
+  const [errors, setErrors] = useState('')
+  // const [user, loading] = useAuthState(auth)
+  // if (user)
+  // {
+  //   navigate("/home")
+  // }
+  const navigate = useNavigate()
+  if (user) navigate("/home")
+
+  async function Oauth(){
+    const googleauthprovider = new GoogleAuthProvider()
+      const result = await signInWithPopup(auth, googleauthprovider)
+      console.log(result)
+  }
   
   function Validator(e){
       e.preventDefault()
-      if (setformData.password1 != setformData.password2)
+      if (setformData.password1 !== setformData.password2)
       {
         
-        setErrors.title = "The password fields doesn't match"
-        console.log(setErrors.title)
+        setErrors("Passwords do not match")
+        console.log(errors)
       }
       else  if (setformData.password1.length<8)
       {
-        setErrors.title = "The password should be greater than 8 characters" 
+        setErrors("Password must be atleast 8 characters long")
+        console.log(errors)
         console.log("stasd")
       }
       else
       {
-        props.response(setformData);
+        Register(setformData)
       }
   }
 
@@ -232,11 +252,7 @@ export const Signup = (props) => {
               />
             </div>
           </div>
-          {
-            setErrors.title!=""?
-            (<p className="text-2xl">{setErrors.title}</p>)
-            :console.log("ad")
-          }
+          <p className='text-xs text-red-500'>{errors}</p>
           <p className="flex text-center"></p>
           <div className="mt-6">
           <button
