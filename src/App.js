@@ -1,28 +1,21 @@
 import React, { useEffect } from 'react'
-import { useState } from 'react'
-import { SignupUser } from './auth'
-import {BrowserRouter, Routes, Route, Link} from 'react-router-dom'
+import { SignupUser } from './Utilities/auth'
+import {BrowserRouter, Routes, Route, Link, useNavigate, redirect} from 'react-router-dom'
+import Authenticator, { AuthProvider } from "./Utilities/AuthContext"
+import { useAuth } from './Utilities/AuthContext'
 
 import {Signin, Signup} from './Components/form'
+import Home from './Components/home'
 import NotFound from './Components/notfound'
+import LogoutUser from './Components/logoutuser'
 
-var isAuthenticated = false
-console.log(isAuthenticated)
 
 
 const App = () => {
-  async function formprocess(dict) {
-    console.log(dict)
-    const user = await SignupUser(dict)
-    if (user){
-      isAuthenticated = true
-      console.log('login', isAuthenticated)
-    }
-    console.log(user)
-  }
 
   return (
     <BrowserRouter>
+    <AuthProvider>
     <Routes>
         <Route path='/' element={
         <div>
@@ -45,10 +38,13 @@ const App = () => {
 
         </div>
         }/>
-        <Route path='/signin' element={<Signin response={formprocess}/>}/>
-        <Route path='/signup' element={<Signup response={formprocess}/>}/>
+        <Route path='/signin' element={<Signin/>}/>
+        <Route path='/signup' element={<Signup/>}/>
+        <Route path='/logout' element={<LogoutUser/>}/>
+        <Route path='/home' element={<Home/>}/>
         <Route path='*' element={<NotFound/>}/>
     </Routes>
+    </AuthProvider>
     </BrowserRouter>
   )
 }
