@@ -7,14 +7,16 @@ const Authenticator = createContext()
 
 export const AuthProvider = ({children})=>{
     const [user, setUser] = useState(null)
+    console.log(user)
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate()
 
     useEffect(()=>{
         CheckUser()
-    })
+    },[])
 
     async function Login(credentials) {
+        setLoading(true)
         try{
                 const logging = await account.createEmailSession(
                     credentials.mail,
@@ -30,8 +32,10 @@ export const AuthProvider = ({children})=>{
         console.log('data:', credentials.mail,
         credentials.password)
     }
+    setLoading(false)
     }
     async function Register(credentials) {
+        setLoading(true)
         try {
             const newaccount = await account.create(
                 ID.unique(),
@@ -43,24 +47,38 @@ export const AuthProvider = ({children})=>{
         } catch (error) {
             console.error(error)
         }
+        setLoading(false)
     }
     async function CheckUser() {
         try {
             const userDetails = await account.get()
             setUser(userDetails)
+            return true
         } 
         catch (error) {
-            console.error(error)
+            return false
         }
     }
     async function Logout() {
-        await account.deleteSession('current')
-        setUser(null)
-        navigate('/')
+        try {
+            if (CheckUser)
+            {
+            await account.deleteSession('current')
+            setUser(null)
+            navigate('/')
+            }
+        }
+        catch(error)
+        {
+            console.log("Logout", error)
+        }
     }
     
     const context = {
         user,
+        setUser,
+        loading,
+        setLoading,
         Login,
         Register,
         CheckUser,

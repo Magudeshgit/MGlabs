@@ -8,6 +8,7 @@ import {Signin, Signup} from './Components/form'
 import Home from './Components/home'
 import NotFound from './Components/notfound'
 import LogoutUser from './Components/logoutuser'
+import Loader from './Components/githubauth'
 
 
 
@@ -42,6 +43,7 @@ const App = () => {
         <Route path='/signup' element={<Signup/>}/>
         <Route path='/logout' element={<LogoutUser/>}/>
         <Route path='/home' element={<Home/>}/>
+        <Route path='/githubauth' element={<Loader/>}/>
         <Route path='*' element={<NotFound/>}/>
     </Routes>
     </AuthProvider>

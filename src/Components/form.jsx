@@ -1,5 +1,5 @@
 //Library Imports
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState } from 'react'
 import { Link, useNavigate} from 'react-router-dom'
 import { account } from '../Utilities/appwriteconfig'
@@ -9,6 +9,7 @@ import { useAuth } from '../Utilities/AuthContext'
 
 
 import {auth} from '../Utilities/firebase'
+import Loader from '../Components/loader'
 // import Loader from './loader'
 
 //Static Assets
@@ -22,21 +23,31 @@ import github from '../Assets/Images/github.png'
 export const Signin = (props) => {
   const navigate = useNavigate()
   document.title = "MGLabs || Signin"
-  const {user, Login} = useAuth()
-  console.log(user)
-  if (user) navigate("/home")
+  const {user,setUser, Login, loading} = useAuth()
   //Google Auth Check
-  // const [user,loading] = useAuthState(auth)
-  // const navigate = useNavigate()
+  const [OauthUser,Oauthloading] = useAuthState(auth)
+  if (OauthUser) setUser(OauthUser)
+  if (user) navigate("/home")
   
   //Form Handling
   const [formData, setformData] = useState({
     "mail": "", 
     "password": ""
 })
-  function handlingFunction(e){
-        e.preventDefault()
-        const loginOps = Login(setformData)
+    function handlingFunction(e){
+          e.preventDefault()
+          const loginOps = Login(setformData)
+      }
+
+    async function GoogleOauth(){
+      const googleauthprovider = new GoogleAuthProvider()
+        const result = await signInWithPopup(auth, googleauthprovider)
+        if(result) setUser(result)
+    }
+  
+    async function GithubOauth(){
+      const githubauthprovider = 
+      window.location.href = 'https://github.com/login/oauth/authorize?client_id=750195eef141e27ece65'
     }
     return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-8 lg:px-8">
@@ -100,11 +111,29 @@ export const Signin = (props) => {
             <div>
               <button
                 type="submit"
-                className="flex w-full justify-center rounded-md bg-[#5E5BF1] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="flex w-full gap-2 items-center justify-center rounded-md bg-[#5E5BF1] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
+                {loading?<Loader/>:null}
                 Sign in
               </button>
             </div>
+            <div className="mt-6">
+          <div className="w-full  mt-4 flex items-center justify-evenly">
+            <div className="h-px w-1/4 bg-slate-300"></div>
+            <p>Or continue with</p>
+            <div className="h-px w-1/4 bg-slate-300"></div>
+          </div>
+          <div className="flex w-full items-center justify-evenly gap-4 mt-4">
+              <div onClick={GoogleOauth} className="flex w-full px-2 py-3 items-center rounded-md justify-center gap-3 ring-offset-2 ring-0 border-solid border-2 border-slate-100 cursor-pointer">
+                <img src={google} alt="googleimg" className='max-h-8'/>
+                <p className="text-xl font-medium">Google</p>
+              </div>
+              <div onClick={GithubOauth} className="disabled flex w-full px-2 py-3 ring-offset-2 ring-0 items-center rounded-md justify-center gap-3 border-solid border-2 border-slate-100 cursor-pointer">
+                <img src={github} alt="googleimg"  className='max-h-8'/>
+                <p className="text-xl font-medium">Github</p>
+              </div>
+          </div>
+          </div>  
           </form>
 
           <p className="mt-4 text-center text-sm text-gray-500">
@@ -121,27 +150,30 @@ export const Signin = (props) => {
 
 export const Signup = (props) => {
   document.title = "MGLabs || Create an account"
-  const {user, Register} = useAuth()
-  console.log(user) //Dev purposed
+  const {user, Register, setUser, loading} = useAuth()
   const [formData, setformData] = useState({
     "username": "",
     "mail": "", 
     "password1": "",
     "password2": ""
 })
+  const [OauthUser, authloading] = useAuthState(auth)
+  if (OauthUser) setUser(OauthUser)
   const [errors, setErrors] = useState('')
-  // const [user, loading] = useAuthState(auth)
-  // if (user)
-  // {
-  //   navigate("/home")
-  // }
   const navigate = useNavigate()
-  if (user) navigate("/home")
+  useEffect(()=>{
+    if (user) navigate("/home")
+  })  
 
-  async function Oauth(){
+  async function GoogleOauth(){
     const googleauthprovider = new GoogleAuthProvider()
       const result = await signInWithPopup(auth, googleauthprovider)
       console.log(result)
+  }
+
+  async function GithubOauth(){
+    const githubauthprovider = 
+    window.location.href = 'https://github.com/login/oauth/authorize?client_id=750195eef141e27ece65'
   }
   
   function Validator(e){
@@ -258,8 +290,8 @@ export const Signup = (props) => {
           <button
               type="submit"
               className="flex mt-4 items-center gap-2 w-full justify-center rounded-md bg-[#5E5BF1] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-              {/* <Loader/> */}
-              Sign in
+              {loading?<Loader/>:null}
+              Sign up
           </button>
             </div>
           <div className="mt-6">
@@ -269,11 +301,11 @@ export const Signup = (props) => {
             <div className="h-px w-1/4 bg-slate-300"></div>
           </div>
           <div className="flex w-full items-center justify-evenly gap-4 mt-4">
-              <div onClick={Oauth} className="flex w-full px-2 py-3 items-center rounded-md justify-center gap-3 ring-offset-2 ring-0 border-solid border-2 border-slate-100 cursor-pointer">
+              <div onClick={GoogleOauth} className="flex w-full px-2 py-3 items-center rounded-md justify-center gap-3 ring-offset-2 ring-0 border-solid border-2 border-slate-100 cursor-pointer">
                 <img src={google} alt="googleimg" className='max-h-8'/>
                 <p className="text-xl font-medium">Google</p>
               </div>
-              <div className="flex w-full px-2 py-3 ring-offset-2 ring-0 items-center rounded-md justify-center gap-3 border-solid border-2 border-slate-100 cursor-pointer">
+              <div onClick={GithubOauth} className="disabled flex w-full px-2 py-3 ring-offset-2 ring-0 items-center rounded-md justify-center gap-3 border-solid border-2 border-slate-100 cursor-pointer">
                 <img src={github} alt="googleimg"  className='max-h-8'/>
                 <p className="text-xl font-medium">Github</p>
               </div>
