@@ -1,14 +1,15 @@
 import React, { useEffect } from 'react'
-import { SignupUser } from './Utilities/auth'
 import {BrowserRouter, Routes, Route, Link, useNavigate, redirect} from 'react-router-dom'
 import Authenticator, { AuthProvider } from "./Utilities/AuthContext"
 import { useAuth } from './Utilities/AuthContext'
 
 import {Signin, Signup} from './Components/form'
-import Home from './Components/home'
 import NotFound from './Components/notfound'
 import LogoutUser from './Components/logoutuser'
 import Loader from './Components/githubauth'
+
+//Pages
+import Home from './Pages/home'
 
 
 

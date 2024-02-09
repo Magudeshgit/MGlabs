@@ -2,6 +2,7 @@ import {createContext, useState, useContext, useEffect} from "react";
 import {account, auth} from "./appwriteconfig"
 import {useNavigate} from "react-router-dom"
 import {ID} from "appwrite"
+import { CheckgitUser, CheckgUser } from "../Components/githubauth";
 
 const Authenticator = createContext()
 

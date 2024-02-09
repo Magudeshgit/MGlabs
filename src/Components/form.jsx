@@ -6,6 +6,7 @@ import { account } from '../Utilities/appwriteconfig'
 import {GoogleAuthProvider, signInWithPopup} from 'firebase/auth'
 import {useAuthState} from 'react-firebase-hooks/auth'
 import { useAuth } from '../Utilities/AuthContext'
+import { CheckgitUser } from './githubauth'
 
 
 import {auth} from '../Utilities/firebase'
@@ -26,6 +27,10 @@ export const Signin = (props) => {
   const {user,setUser, Login, loading} = useAuth()
   //Google Auth Check
   const [OauthUser,Oauthloading] = useAuthState(auth)
+
+  //Oauth Sessions
+  //console.log(CheckgitUser)
+//  if  (CheckgitUser) setUser(CheckgitUser)
   if (OauthUser) setUser(OauthUser)
   if (user) navigate("/home")
   
@@ -120,7 +125,7 @@ export const Signin = (props) => {
             <div className="mt-6">
           <div className="w-full  mt-4 flex items-center justify-evenly">
             <div className="h-px w-1/4 bg-slate-300"></div>
-            <p>Or continue with</p>
+            <p>Or signup with</p>
             <div className="h-px w-1/4 bg-slate-300"></div>
           </div>
           <div className="flex w-full items-center justify-evenly gap-4 mt-4">
@@ -128,10 +133,10 @@ export const Signin = (props) => {
                 <img src={google} alt="googleimg" className='max-h-8'/>
                 <p className="text-xl font-medium">Google</p>
               </div>
-              <div onClick={GithubOauth} className="disabled flex w-full px-2 py-3 ring-offset-2 ring-0 items-center rounded-md justify-center gap-3 border-solid border-2 border-slate-100 cursor-pointer">
+              {/* <div onClick={GithubOauth} className="disabled flex w-full px-2 py-3 ring-offset-2 ring-0 items-center rounded-md justify-center gap-3 border-solid border-2 border-slate-100 cursor-pointer">
                 <img src={github} alt="googleimg"  className='max-h-8'/>
                 <p className="text-xl font-medium">Github</p>
-              </div>
+              </div> */}
           </div>
           </div>  
           </form>
@@ -297,7 +302,7 @@ export const Signup = (props) => {
           <div className="mt-6">
           <div className="w-full  mt-4 flex items-center justify-evenly">
             <div className="h-px w-1/4 bg-slate-300"></div>
-            <p>Or continue with</p>
+            <p>Or signin with</p>
             <div className="h-px w-1/4 bg-slate-300"></div>
           </div>
           <div className="flex w-full items-center justify-evenly gap-4 mt-4">
@@ -305,10 +310,10 @@ export const Signup = (props) => {
                 <img src={google} alt="googleimg" className='max-h-8'/>
                 <p className="text-xl font-medium">Google</p>
               </div>
-              <div onClick={GithubOauth} className="disabled flex w-full px-2 py-3 ring-offset-2 ring-0 items-center rounded-md justify-center gap-3 border-solid border-2 border-slate-100 cursor-pointer">
+              {/* <div onClick={GithubOauth} className="disabled flex w-full px-2 py-3 ring-offset-2 ring-0 items-center rounded-md justify-center gap-3 border-solid border-2 border-slate-100 cursor-pointer">
                 <img src={github} alt="googleimg"  className='max-h-8'/>
                 <p className="text-xl font-medium">Github</p>
-              </div>
+              </div> */}
           </div>
           </div>  
 

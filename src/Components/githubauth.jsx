@@ -1,20 +1,34 @@
 import { data } from 'autoprefixer'
 import React, { useEffect } from 'react'
-import axios from 'axios'
+import {useNavigate} from 'react-router-dom'
+import { useAuth } from '../Utilities/AuthContext'
+import {useAuthState} from 'react-firebase-hooks/auth'
+import {auth} from '../Utilities/firebase'
 
 const Loader = () => {
+  const navigate = useNavigate()
+  const {user, setUser} = useAuth()
+  if(user) navigate("/home")
+
   useEffect(()=>{
     async function APIFETCH(){
+      let access_token = localStorage.getItem('access_token')
+      if(access_token)
+      {
+        CheckgitUser(access_token)
+      }
       const queryString = window.location.search
       const urlParams = new URLSearchParams(queryString)
       const CODE = urlParams.get('code')
+      console.log("code",CODE)
 
       const url = 'http://127.0.0.1:4000/githubaccess?code='+CODE
-
-      //axios.get(url).then((resp)=>{console.log(resp)})
       const response = await fetch(url,{method:'GET'})
       const data = await response.json()
-      console.log(data)
+      console.log("JSON", data)
+      CheckgitUser(data.access_token)
+
+
     }
     APIFETCH()
 
@@ -38,4 +52,29 @@ const Loader = () => {
     </>
   )
 }
+
+async function CheckgUser(access_token="nil")
+{
+  const {setUser} = useAuth()
+        const [OauthUser,Oauthloading] = useAuthState(auth)
+        if (OauthUser) setUser(OauthUser)
+}
+
+async function CheckgitUser(access_token="nil")
+      {
+        const navigate = useNavigate()
+        let act = localStorage.getItem("access_token") || access_token
+        const {setUser} = useAuth()
+        const userurl = 'http://127.0.0.1:4000/getuser?access_token='+act
+        const userResponse = await fetch(userurl, {method: 'GET'})
+        const st = await userResponse.json()
+        console.log("USER",st)
+        setUser(st)
+
+        //if (st.login) return st 
+        //else return false
+        if(st.login) navigate("/home");
+      }
+
 export default Loader
+export {CheckgitUser, CheckgUser}
