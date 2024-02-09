@@ -4,7 +4,12 @@ module.exports = {
     "./src/**/*.{js,jsx}", './index.html'
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        "poppins": ["Poppins"],
+        "inter": ['Inter']
+      },
+    },
   },
   plugins: [],
 }
