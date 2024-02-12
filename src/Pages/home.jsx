@@ -9,9 +9,10 @@ import Header from '../Components/header'
 import Profile from '../Components/profile'
 import Jumbotron from '../Components/jumbotron'
 import Vmcard from '../Components/vmcard'
+import Monitoring from '../Components/monitoring'
 
 const Home = () => {
-  //document.title = "MGLabs || Home"
+  document.title = "MGLabs || Home"
   const {user} = useAuth()
   const navigate = useNavigate()
   useEffect(()=>{
@@ -27,12 +28,19 @@ const Home = () => {
             <Header/>
             <Profile/>
           </div>
-          <div className="lefttab max-w-xl">
+          <div className='tabparent flex justify-between items-center'>
+          <div className="lefttab w-3/5">
             <Jumbotron/>
             <p className='font-poppins text-lg text-slate-700 font-semibold mt-6'>Virtual Machines</p>
-
+            <div className='flex flex-col gap-4'>
             <Vmcard/>
+            </div>
           </div>
+          <div className='rightab w-1/3 h-4/5'>
+            <Monitoring/>
+          </div>
+          </div>
+
         </div>
     </section>
   )
