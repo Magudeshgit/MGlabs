@@ -10,6 +10,9 @@ import Loader from './Components/githubauth'
 
 //Pages
 import Home from './Pages/home'
+import Labs from './Pages/labs'
+import Account from './Pages/account'
+import Settings from './Pages/settings'
 
 
 
@@ -44,6 +47,9 @@ const App = () => {
         <Route path='/signup' element={<Signup/>}/>
         <Route path='/logout' element={<LogoutUser/>}/>
         <Route path='/home' element={<Home/>}/>
+        <Route path='/labs' element={<Labs/>}/>
+        <Route path='/settings' element={<Settings/>}/>
+        <Route path='/account' element={<Account/>}/>
         <Route path='/githubauth' element={<Loader/>}/>
         <Route path='*' element={<NotFound/>}/>
     </Routes>
