@@ -12,15 +12,38 @@ import Jumbotron from '../Components/jumbotron'
 import Vmcard from '../Components/vmcard'
 import Monitoring from '../Components/monitoring'
 import Vmdetail from '../Components/vmdetail'
+import Vmloading from '../Components/vmloading'
 
 //API Endpoints
 
+const Instances = 'http://localhost:4000/Instancedata'
+const Status = 'http://localhost:4000/getStatus'
+let instanceData;
 
 const Home = () => {
   document.title = "MGLabs || Home"
   const {user} = useAuth()
   const navigate = useNavigate()
   const [Vmpopup, setVmpopup] = useState(false)
+  const [vmloading, setvmloading] = useState(true)
+  async function currentStatus()
+  {
+    const dt = await fetch(Status, {method: 'GET'})
+    return dt
+  }
+  useEffect(()=>{
+    setvmloading(true)
+    async function fetchdata(){
+      console.log("fetching data")
+      const dt = await fetch(Instances, {method: 'GET'})
+      instanceData = await dt.json()
+      const stdata = currentStatus()
+      console.log(stdata)
+      
+      setvmloading(false)
+    }
+    fetchdata()
+  },[])
 
   // function popupfunction(){
   //   setVmpopup(true)
@@ -46,8 +69,7 @@ const Home = () => {
             <Jumbotron/>
             <p className='font-poppins text-lg text-slate-700 font-semibold mt-6'>Virtual Machines</p>
             <div className='flex flex-col gap-4'>
-            <Vmcard callback={setVmpopup} />
-            {Vmpopup?<Vmdetail current={setVmpopup}/>:<></>}
+              {vmloading?<Vmloading/>:<Vmcard callback={setVmpopup} data={instanceData}/>}
             </div>
           </div>
           <div className='rightab lg:min-w-1/3 w-full h-4/5'>
