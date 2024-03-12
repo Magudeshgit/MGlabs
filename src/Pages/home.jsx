@@ -13,35 +13,47 @@ import Vmcard from '../Components/vmcard'
 import Monitoring from '../Components/monitoring'
 import Vmdetail from '../Components/vmdetail'
 import Vmloading from '../Components/vmloading'
+import Warning from '../Components/infonotification'
+
+// Instance State 
+// Instance Status checks
+// Instance 
 
 //API Endpoints
 
 const Instances = 'http://localhost:4000/Instancedata'
 const Status = 'http://localhost:4000/getStatus'
 let instanceData;
+let Data_Status = false;
 
 const Home = () => {
-  document.title = "MGLabs || Home"
+  document.title = "MGLabs || Home";
   const {user} = useAuth()
   const navigate = useNavigate()
   const [Vmpopup, setVmpopup] = useState(false)
   const [vmloading, setvmloading] = useState(true)
-  async function currentStatus()
-  {
-    const dt = await fetch(Status, {method: 'GET'})
-    return dt
-  }
+  const [vmData, setvmData] = useState([])
+  const [infoStatus, setinfoStatus] = useState({context:""})
+
   useEffect(()=>{
     setvmloading(true)
     async function fetchdata(){
       console.log("fetching data")
-      const dt = await fetch(Instances, {method: 'GET'})
-      instanceData = await dt.json()
-      const stdata = currentStatus()
-      console.log(stdata)
-      
-      setvmloading(false)
+      try{
+        const dt = await fetch(Instances, {method: 'GET'})
+        instanceData = await dt.json()
+        console.log('xxx',instanceData)
+        setvmData(instanceData)
+        setvmloading(false)
+        Data_Status = true
+      }
+      catch (e){
+        setinfoStatus(true)
+        console.log(e)
+      }
     }
+
+
     fetchdata()
   },[])
 
@@ -49,6 +61,19 @@ const Home = () => {
   //   setVmpopup(true)
   // }
   useEffect(()=>{
+        setInterval(async ()=>{
+          const request = await fetch(Status, {method: 'GET'})
+          const data = await request.json()
+          console.log('xxxyyy', instanceData['Status'], data['Status'])
+
+          if (data['Status'] != instanceData['Status'])
+          {
+            console.log("difference noted")
+            instanceData['Status'] = data['Status'];
+            setvmData(instanceData)
+            console.log("Updated", vmData)
+          }
+        },5000)
     if (user===null) navigate('/signup');
   })
   
@@ -57,6 +82,8 @@ const Home = () => {
     <motion.div initial={{opacity: 0}} animate={{opacity: 1}} transition={{durations: 1}}>
     <section className='w-full h-screen px-6 bg-[#F9F9F9]'>
         <Navbar/>
+        {console.log(infoStatus)}
+        {(infoStatus.context!="")?<Warning intent={infoStatus} setintent={setinfoStatus}/>:<></>}
         <div className="parent lg:ml-20 py-6 flex flex-col">
           <div className="flex justify-between">
             <Header
@@ -69,7 +96,7 @@ const Home = () => {
             <Jumbotron/>
             <p className='font-poppins text-lg text-slate-700 font-semibold mt-6'>Virtual Machines</p>
             <div className='flex flex-col gap-4'>
-              {vmloading?<Vmloading/>:<Vmcard callback={setVmpopup} data={instanceData}/>}
+              {vmloading?<Vmloading/>:<Vmcard callback={setVmpopup} data={vmData} notification={setinfoStatus}/>}
             </div>
           </div>
           <div className='rightab lg:min-w-1/3 w-full h-4/5'>

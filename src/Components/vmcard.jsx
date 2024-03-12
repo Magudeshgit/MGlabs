@@ -6,8 +6,8 @@ import Vmloading from '../Components/vmloading'
 
 
 
-const Vmcard = ({callback, data}) => {
-  console.log("vmcard", data)
+const Vmcard = ({callback, data, notification}) => {
+  console.log("vmcard", data) 
   return (
     <div className="card flex cursor-pointer p-4 bg-[#FBFBFB] shadow-md rounded-md flex-col" onClick={()=>{callback(true)}}>
         <div className="vminfo flex items-center justify-between">
@@ -34,7 +34,7 @@ const Vmcard = ({callback, data}) => {
               </svg>
               </p>
           </div>
-          <Vmbutton btnData={data.InstanceID}/>
+          <Vmbutton btnData={data.InstanceID} notificator={notification}/>
         </div>
     </div>
   )
