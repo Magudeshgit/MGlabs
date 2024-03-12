@@ -13,14 +13,16 @@ import Home from './Pages/home'
 import Labs from './Pages/labs'
 import Account from './Pages/account'
 import Settings from './Pages/settings'
+import Loading from './Pages/loading'
 
 
 
 const App = () => {
-
+  const loading = false
   return (
     <BrowserRouter>
     <AuthProvider>
+      {loading?<Loading/>:
     <Routes>
         <Route path='/' element={
         <div>
@@ -53,6 +55,7 @@ const App = () => {
         <Route path='/githubauth' element={<Loader/>}/>
         <Route path='*' element={<NotFound/>}/>
     </Routes>
+}
     </AuthProvider>
     </BrowserRouter>
   )
